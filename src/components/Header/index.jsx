@@ -1,11 +1,26 @@
 import styled, { keyframes } from "styled-components";
 import colors from "../../utils/colors";
 import sizing from "../../utils/sizing";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo-s.png";
 import githubIcon from "../../assets/header/github-142-svgrepo-com.svg";
 import linkedinIcon from "../../assets/header/linkedin-1-svgrepo-com.svg";
 import maltIcon from "../../assets/header/malt-svgrepo-com.svg";
 import mediaQueries from "../../utils/mediaQueries";
+
+const rotateScaleUp = keyframes`
+  0% {
+    -webkit-transform: scale(1) rotateZ(0);
+            transform: scale(1) rotateZ(0);
+  }
+  50% {
+    -webkit-transform: scale(2) rotateZ(180deg);
+            transform: scale(2) rotateZ(180deg);
+  }
+  100% {
+    -webkit-transform: scale(1) rotateZ(360deg);
+            transform: scale(1) rotateZ(360deg);
+  }
+`;
 
 const b = keyframes`
 0% {
@@ -37,7 +52,7 @@ const b = keyframes`
 const HeaderContainer = styled.header`
   background-color: ${colors.cards};
   width: 100%;
-  border-radius: 30px;
+  border-radius: ${sizing.border};
   display: flex;
   justify-content: space-between;
   margin: 20px 0;
@@ -60,7 +75,7 @@ const HeaderContainer = styled.header`
 
 const LogoContainer = styled.div`
   background-color: ${colors.color};
-  border-radius: 30px 0 0 30px;
+  border-radius: ${sizing.border} 0 0 ${sizing.border};
   width: 50%;
   /* flex: 1; */
 
@@ -210,6 +225,9 @@ const NetworksContainer = styled.div`
     img {
       width: calc(${sizing.l} + 10px);
       height: calc(${sizing.l} + 10px);
+      &:hover {
+        animation: ${rotateScaleUp} 0.8s ease;
+      }
 
       @media ${mediaQueries.laptop} {
         width: ${sizing.xl};

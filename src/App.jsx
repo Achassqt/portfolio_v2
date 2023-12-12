@@ -7,6 +7,8 @@ import colors from "./utils/colors";
 import Projects from "./components/Projects";
 import mediaQueries from "./utils/mediaQueries";
 import Footer from "./components/Footer";
+import Loader from "./components/Loader";
+import { useEffect, useState } from "react";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -14,15 +16,18 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     font-family: 'Chakra Petch', sans-serif;
-
   }
+
+  html {
+    -webkit-scroll-behavior: smooth;
+    scroll-behavior: smooth;
+}
 
   body {
     background-color: ${colors.background};
     /* font-family: 'Nova Square', sans-serif; */
     font-family: 'Chakra Petch', sans-serif;
     color: white;
-    scroll-behavior: smooth;
   }
 `;
 
@@ -49,8 +54,16 @@ const MainContainer = styled.main`
 `;
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  });
   return (
     <MainContainer>
+      {loading && <Loader />}
       <GlobalStyle />
       <div className="top__container">
         <Header />

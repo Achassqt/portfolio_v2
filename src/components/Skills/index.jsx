@@ -26,7 +26,7 @@ const a = keyframes`
 const SkillsContainer = styled.section`
   width: 100%;
   /* height: 100vh; */
-  border-radius: 30px;
+  border-radius: ${sizing.border};
   background-color: ${colors.cards};
   padding: 20px;
   margin-bottom: 30px;
@@ -171,7 +171,7 @@ function Skills() {
     };
   }, []);
   return (
-    <SkillsContainer>
+    <SkillsContainer id="skills">
       <h2>SKILLS</h2>
       <SkillsContent ref={divRef}>
         <div className="skills-category">

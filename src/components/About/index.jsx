@@ -1,6 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import colors from "../../utils/colors";
-import illustration from "../../assets/1.png";
+import illustration from "../../assets/illustration.png";
+import illustrationGif from "../../assets/illustration.gif";
 import sizing from "../../utils/sizing";
 import mediaQueries from "../../utils/mediaQueries";
 
@@ -36,7 +37,7 @@ const AboutContainer = styled.section`
   width: 100%;
   /* height: 75vh; */
   /* height: 80vh; */
-  border-radius: 30px;
+  border-radius: ${sizing.border};
   margin-bottom: 20px;
 
   @media ${mediaQueries.tablette} {
@@ -140,7 +141,7 @@ const AboutContent = styled.div`
           height: 40px;
           background-color: ${colors.color};
           border: none;
-          border-radius: 4px;
+          border-radius: ${sizing.border};
           margin-right: 10px;
           cursor: pointer;
           font-family: "Nova Square", sans-serif;
@@ -154,7 +155,7 @@ const AboutContent = styled.div`
             width: calc(100% + 2px);
             height: calc(100% + 2px);
             border: 1px solid ${colors.color};
-            border-radius: 4px;
+            border-radius: ${sizing.border};
             z-index: 1;
             opacity: 0;
           }
@@ -179,6 +180,10 @@ const AboutContent = styled.div`
         & > button > span {
           position: relative;
           font-weight: bold;
+        }
+
+        & > button:first-of-type > span {
+          color: black;
         }
 
         & > .cv-btn > span:after {
@@ -260,7 +265,7 @@ const AboutContent = styled.div`
   }
 `;
 
-function About({ ref }) {
+function About() {
   return (
     <AboutContainer id="about_id">
       <AboutContent>
@@ -269,25 +274,56 @@ function About({ ref }) {
             <h1>Bonjour, Je suis Sacha</h1>
             <span>Développeur web Junior</span>
             <div className="btns-container">
-              <button className="cv-btn">
+              <button
+                className="cv-btn"
+                onClick={() => {
+                  const link = document.createElement("a");
+                  link.href = "cv_sacha-souquet.pdf";
+                  link.download = "cv_sacha-souquet.pdf";
+
+                  console.log(link.href);
+
+                  link.click();
+                }}
+              >
                 <span>Télécharger CV</span>
               </button>
-              <button className="black-btn">
+              <button
+                className="black-btn"
+                onClick={() => {
+                  const targetElement = document.getElementById("skills");
+
+                  // Vérifier si l'élément cible existe
+                  if (targetElement) {
+                    // Faire défiler la page en douceur vers l'élément cible
+                    targetElement.scrollIntoView(true);
+                  }
+                }}
+              >
                 <span>En savoir plus</span>
               </button>
             </div>
           </div>
           <p>
-            Passionné d'informatique et de nouvelles technologies, j'ai décidé
-            de me lancer dans le développement web. A force de rigueur et de
-            volonté, j' ai obtenu un diplôme dans ce domaine tout en continuant
-            de me former en autodidacte. Je souhaite acquérir encore plus
-            d'expérience, en rejoignant une équipe de professionnels tout en
-            apportant de mes compétences.
+            Passionné par l'informatique et les nouvelles technologies, j'ai
+            décidé de me lancer dans le développement web. J'ai décroché un
+            diplôme dans ce domaine et je poursuis mon apprentissage en
+            autodidacte. Je souhaite maintenant acquérir davantage d'expérience
+            en rejoignant une équipe de professionnels et en mettant mes
+            compétences à contribution.
           </p>
         </div>
         <div className="content-right">
-          <img src={illustration} alt="Il code dans l'espace" />
+          <img
+            src={illustration}
+            alt="Il code dans l'espace"
+            onMouseEnter={(e) => {
+              e.target.src = illustrationGif;
+            }}
+            onMouseLeave={(e) => {
+              e.target.src = illustration;
+            }}
+          />
         </div>
       </AboutContent>
     </AboutContainer>

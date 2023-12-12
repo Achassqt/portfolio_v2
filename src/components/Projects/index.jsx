@@ -22,9 +22,36 @@ const opacity = keyframes`
         }
 `;
 
+const b = keyframes`
+0% {
+  transform: translate(0)
+}
+
+  20% {
+    transform: translate(-2px, 1px)
+  }
+
+  40% {
+    transform: translate(-2px, -1px)
+  }
+
+  60% {
+    transform: translate(2px, 1px)
+  }
+
+  80% {
+    transform: translate(2px, -1px)
+  }
+
+  to {
+    transform: translate(0)
+  }
+
+`;
+
 const ProjectsContainer = styled.section`
   background-color: ${colors.cards};
-  border-radius: 30px;
+  border-radius: ${sizing.border};
   padding: 20px;
   /* padding: 40px;
   padding-top: 30px; */
@@ -68,16 +95,13 @@ const ProjectsContent = styled.div`
   /* align-items: normal; */
   overflow: auto;
   /* padding-bottom: 10px; */
+  -ms-overflow-style: none; // IE 10+
+  overflow: -moz-scrollbars-none; // Fire
 
   &::-webkit-scrollbar {
-    /* width: 2px;
-    height: 2px; */
-    width: 0px;
-    height: 0px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: #ffffff90; /* Couleur de la poignée de la barre de défilement */
-    border-radius: 6px; /* Bord arrondi de la poignée */
+    /* width: 0px;
+    height: 0px; */
+    display: none;
   }
 
   @media ${mediaQueries.mobileL} {
@@ -94,7 +118,7 @@ const ProjectsContent = styled.div`
     margin-right: 20px;
     height: 400px;
     background-color: ${colors.background};
-    border-radius: 15px;
+    border-radius: ${sizing.border};
     /* padding: 10px; */
     /* box-shadow: 0px 0px 5px ${colors.color}; */
     color: black;
@@ -138,6 +162,7 @@ const ProjectsContent = styled.div`
         align-items: center;
         justify-content: center;
         /* transform: rotate(-90deg) rotateX(180deg); */
+        overflow: hidden;
 
         animation: ${opacity} 1s ease-out;
 
@@ -195,23 +220,94 @@ const ProjectFooter = styled.div`
   display: flex;
   padding: 20px 10px;
   .links-container {
-    .project-links {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    .project-link {
+      position: relative;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border: none;
+      border-radius: ${sizing.border};
+      background-color: ${colors.color};
+      width: 48%;
+      cursor: pointer;
 
-      &__link {
+      &::after {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        z-index: -1;
+        width: calc(100% + 2px);
+        height: calc(100% + 2px);
+        border: 1px solid ${colors.color};
+        border-radius: ${sizing.border};
+        z-index: 10000;
+        /* opacity: 0; */
+      }
+
+      &:hover:after {
+        opacity: 1;
+        animation: ${b} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+      }
+
+      & > .svg-container__link {
         display: flex;
-        align-items: center;
-
+        justify-content: center;
+        align-items: flex-end;
+        position: relative;
         & > svg {
-          color: ${colors.color};
+          color: black;
+          font-size: ${sizing.s};
         }
 
-        & > a {
-          font-size: ${sizing.s};
-          color: ${colors.color};
-          margin-left: 10px;
+        & > .svg2 {
+          position: absolute;
+          color: white;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
         }
+      }
+
+      &:hover > .svg-container__link > .svg2 {
+        opacity: 1;
+        animation: ${b} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+      }
+
+      & > span {
+        position: relative;
+        font-size: ${sizing.s};
+        font-weight: bold;
+        color: black;
+        margin-left: 10px;
+
+        &::after {
+          content: "Github";
+          color: white;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+        }
+      }
+
+      & > .live {
+        &::after {
+          content: "Site live";
+        }
+      }
+
+      &:hover > span::after {
+        opacity: 1;
+        animation: ${b} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
       }
     }
   }
@@ -308,63 +404,105 @@ function Projects() {
     };
   }, [isMouseOver, scrollDirection]);
 
+  const isEmpty = (value) => {
+    return (
+      value === undefined ||
+      value === null ||
+      (typeof value === "object" && Object.keys(value).length === 0) ||
+      (typeof value === "string" && value.trim().length === 0)
+    );
+  };
+
   return (
     <ProjectsContainer id="project_id">
       <h2>PROJETS</h2>
       <ProjectsContent ref={containerRef}>
-        {projects.map((project, index) => (
-          <div
-            key={index}
-            onClick={() => {
-              handleProjectClick(index);
-            }}
-            className={`project-container ${
-              projectDetails[index] ? "flipped" : ""
-            }`}
-          >
-            <div className="project-content">
-              {!projectDetails[index] && (
-                <div
-                  className="logo"
-                  // style={{ display: !projectDetails[index] ? "flex" : "none" }}
-                >
-                  <img src={project.logo_url} alt="test" />
-                </div>
-              )}
-              {projectDetails[index] && (
-                <div className="project-details">
-                  <div className="project-top">
-                    <img
-                      src={project.mockup_url}
-                      className="laptop-mockup"
-                      alt="projet"
-                    />
-                  </div>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: project.description,
-                    }}
-                  ></p>
-                  <ProjectFooter>
-                    <div className="links-container">
-                      <div className="project-links">
-                        <div className="project-links__link">
-                          <FaGithub />
-                          <a href={project.github_url}>Github</a>
-                        </div>
-                        <div className="project-links__link">
-                          <MdLiveTv />
-                          <a href={project.site_live_url}>Site live</a>
-                        </div>
-                      </div>
+        {!isEmpty(projects[0]) &&
+          projects
+            .slice()
+            .reverse()
+            .map((project, index) => (
+              <div
+                key={index}
+                onClick={() => {
+                  handleProjectClick(index);
+                }}
+                className={`project-container ${
+                  projectDetails[index] ? "flipped" : ""
+                }`}
+              >
+                <div className="project-content">
+                  {!projectDetails[index] && (
+                    <div
+                      className="logo"
+                      onMouseEnter={() => {
+                        document.getElementById(`logo-${index}`).src =
+                          project.logo_gif_url;
+                      }}
+                      onMouseLeave={() => {
+                        document.getElementById(`logo-${index}`).src =
+                          project.logo_url;
+                      }}
+                      // style={{ display: !projectDetails[index] ? "flex" : "none" }}
+                    >
+                      <img
+                        id={`logo-${index}`}
+                        src={project.logo_url}
+                        alt="test"
+                      />
                     </div>
-                    <div className="stack-container"></div>
-                  </ProjectFooter>
+                  )}
+                  {projectDetails[index] && (
+                    <div className="project-details">
+                      <div className="project-top">
+                        <img
+                          src={project.mockup_url}
+                          className="laptop-mockup"
+                          alt="projet"
+                        />
+                      </div>
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: project.description,
+                        }}
+                      ></p>
+                      <ProjectFooter>
+                        <div className="links-container">
+                          {project.github_url && (
+                            <button
+                              className="project-link"
+                              onClick={() => {
+                                window.open(project.github_url, "_blank");
+                              }}
+                            >
+                              <div className="svg-container__link">
+                                <FaGithub />
+                                <FaGithub className="svg2" />
+                              </div>
+                              <span>Github</span>
+                            </button>
+                          )}
+                          {project.site_live_url && (
+                            <button
+                              className="project-link"
+                              onClick={() => {
+                                window.open(project.site_live_url, "_blank");
+                              }}
+                            >
+                              <div className="svg-container__link">
+                                <MdLiveTv />
+                                <MdLiveTv className="svg2" />
+                              </div>
+                              <span className="live">Site live</span>
+                            </button>
+                          )}
+                        </div>
+                      </ProjectFooter>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
-        ))}
+              </div>
+            ))}
       </ProjectsContent>
     </ProjectsContainer>
   );
