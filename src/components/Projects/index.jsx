@@ -326,6 +326,34 @@ const ProjectFooter = styled.div`
   }
 `;
 
+const rotation = keyframes`
+0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+`;
+
+const LoaderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100px;
+
+  & > span {
+    width: 48px;
+    height: 48px;
+    border: 5px solid ${colors.color};
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: ${rotation} 1s linear infinite;
+  }
+`;
+
 function Projects() {
   const containerRef = useRef(null);
   // const scrollableDivRef = useRef(null);
@@ -469,7 +497,11 @@ function Projects() {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        {!isEmpty(projects[0]) &&
+        {isEmpty(projects[0]) ? (
+          <LoaderContainer>
+            <span></span>
+          </LoaderContainer>
+        ) : (
           projects
             .slice()
             .reverse()
@@ -554,7 +586,8 @@ function Projects() {
                   )}
                 </div>
               </div>
-            ))}
+            ))
+        )}
       </ProjectsContent>
     </ProjectsContainer>
   );
