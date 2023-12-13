@@ -97,6 +97,8 @@ const ProjectsContent = styled.div`
   /* padding-bottom: 10px; */
   -ms-overflow-style: none; // IE 10+
   overflow: -moz-scrollbars-none; // Fire
+  user-select: none;
+  -webkit-user-drag: none;
 
   &::-webkit-scrollbar {
     /* width: 0px;
@@ -170,6 +172,8 @@ const ProjectsContent = styled.div`
           width: 100%;
           padding: 20px 0;
           transform: rotate(-90deg) rotateX(180deg);
+          user-select: none;
+          -webkit-user-drag: none;
         }
       }
 
@@ -182,6 +186,8 @@ const ProjectsContent = styled.div`
           .laptop-mockup {
             /* width: 350px; */
             width: 100%;
+            user-select: none;
+            -webkit-user-drag: none;
           }
         }
 
@@ -193,6 +199,8 @@ const ProjectsContent = styled.div`
           overflow: auto;
           border-bottom: 1px solid white;
           color: white;
+          user-select: none;
+          -webkit-user-drag: none;
 
           @media ${mediaQueries.tablette} {
             /* height: 100px; */
@@ -234,6 +242,8 @@ const ProjectFooter = styled.div`
       background-color: ${colors.color};
       width: 48%;
       cursor: pointer;
+      user-select: none;
+      -webkit-user-drag: none;
 
       &::after {
         content: "";
@@ -318,7 +328,11 @@ const ProjectFooter = styled.div`
 
 function Projects() {
   const containerRef = useRef(null);
+  // const scrollableDivRef = useRef(null);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [startX, setStartX] = useState(0);
   const [isMouseOver, setIsMouseOver] = useState(false);
+  const [isTouching, setIsTouching] = useState(false);
   const [scrollDirection, setScrollDirection] = useState(1);
   const [projects, setProjects] = useState([]);
   const [projectDetails, setProjectDetails] = useState(
@@ -357,7 +371,7 @@ function Projects() {
   const handleScroll = () => {
     const container = containerRef.current;
 
-    if (!isMouseOver) {
+    if (!isMouseOver && !isTouching) {
       const maxScrollLeft = container.scrollWidth - container.clientWidth - 1;
 
       if (scrollDirection === 1) {
@@ -388,12 +402,24 @@ function Projects() {
       setIsMouseOver(false);
     };
 
+    const handleTouchStart = () => {
+      setIsTouching(true);
+    };
+
+    const handleTouchEnd = () => {
+      setIsTouching(false);
+    };
+
     container.addEventListener("mouseenter", handleMouseEnter);
     container.addEventListener("mouseleave", handleMouseLeave);
+    container.addEventListener("touchstart", handleTouchStart);
+    container.addEventListener("touchend", handleTouchEnd);
 
     return () => {
       container.removeEventListener("mouseenter", handleMouseEnter);
       container.removeEventListener("mouseleave", handleMouseLeave);
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
 
@@ -402,7 +428,27 @@ function Projects() {
     return () => {
       clearInterval(scrollInterval);
     };
-  }, [isMouseOver, scrollDirection]);
+  }, [isMouseOver, isTouching, scrollDirection]);
+
+  const handleMouseDown = (e) => {
+    setIsMouseDown(true);
+    setStartX(e.pageX);
+  };
+
+  const handleMouseUp = () => {
+    setIsMouseDown(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isMouseDown) return;
+    const scrollX = startX - e.pageX;
+    containerRef.current.scrollLeft += scrollX;
+    setStartX(e.pageX);
+  };
+
+  const handleMouseLeave = () => {
+    setIsMouseDown(false);
+  };
 
   const isEmpty = (value) => {
     return (
@@ -416,7 +462,13 @@ function Projects() {
   return (
     <ProjectsContainer id="project_id">
       <h2>PROJETS</h2>
-      <ProjectsContent ref={containerRef}>
+      <ProjectsContent
+        ref={containerRef}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
         {!isEmpty(projects[0]) &&
           projects
             .slice()

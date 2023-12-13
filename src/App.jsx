@@ -28,6 +28,13 @@ const GlobalStyle = createGlobalStyle`
     /* font-family: 'Nova Square', sans-serif; */
     font-family: 'Chakra Petch', sans-serif;
     color: white;
+    &::-webkit-scrollbar {
+            width: 2px;
+    }
+    &::-webkit-scrollbar-thumb {
+            background-color: #ffffff90; /* Couleur de la poignée de la barre de défilement */
+            border-radius: 6px; /* Bord arrondi de la poignée */
+    }
   }
 `;
 
